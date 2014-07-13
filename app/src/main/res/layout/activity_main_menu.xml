@@ -1,0 +1,39 @@
+<LinearLayout
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:padding="10dp">
+
+    <Button
+        android:tag="Scales"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/Scales"
+        android:id="@+id/mainMenuScalesButton" />
+
+    <Button
+        android:tag="Chords"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/Chords"
+        android:id="@+id/mainMenuChordsButton"
+        android:layout_gravity="center_horizontal" />
+
+    <Button
+        android:tag="Tabs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/Tabs"
+        android:id="@+id/MainMenuTabsButton"
+        android:layout_gravity="center_horizontal" />
+
+    <Button
+        android:tag="Tutorials"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/Tutorials"
+        android:id="@+id/mainMenuTutorialsButton"
+        android:layout_gravity="center_horizontal" />
+
+</LinearLayout>
