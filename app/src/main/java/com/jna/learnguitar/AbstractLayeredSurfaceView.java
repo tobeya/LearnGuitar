@@ -11,14 +11,11 @@ import java.util.ArrayList;
 /**
  * Created by adamtobey on 7/8/14.
  */
-public abstract class AbstractLayeredSurfaceView extends SurfaceView implements Runnable {
+public abstract class AbstractLayeredSurfaceView extends SurfaceView{
     protected SurfaceHolder holder;
     protected Canvas canvas;
     protected ArrayList<SurfaceViewRenderLayer> layers;
 
-    private long previousUptime = 0l;
-    private long currentUptime;
-    private int millisDiff;
     private Thread renderThread;
 
     protected AbstractLayeredSurfaceView(Context context){
@@ -31,16 +28,7 @@ public abstract class AbstractLayeredSurfaceView extends SurfaceView implements 
 
     protected abstract void initializeLayers();
 
-    @Override
-    public void run(){
-        currentUptime = SystemClock.elapsedRealtime();
-        millisDiff = (int)(currentUptime-previousUptime);
-        onTick(millisDiff);
-        draw(millisDiff);
-        previousUptime = currentUptime;
-    }
-
-    protected void draw(int elapsedMillis){
+    public void draw(int elapsedMillis){
         if (holder.getSurface().isValid()) {
             canvas = holder.lockCanvas();
             for (SurfaceViewRenderLayer layer : layers) {
@@ -50,20 +38,6 @@ public abstract class AbstractLayeredSurfaceView extends SurfaceView implements 
             }
             holder.unlockCanvasAndPost(canvas);
             canvas = null;
-        }
-    }
-
-    public void play(){
-        previousUptime = SystemClock.elapsedRealtime();
-        renderThread = new Thread(this);
-        renderThread.start();
-    }
-
-    public void pause(){
-        try {
-            renderThread.join();
-        } catch (InterruptedException e){
-            e.printStackTrace();
         }
     }
 
@@ -101,10 +75,6 @@ public abstract class AbstractLayeredSurfaceView extends SurfaceView implements 
         for (SurfaceViewRenderLayer layer : layers){
             layer.onStop();
         }
-    }
-
-    protected void onTick(int elapsedMillis){
-
     }
 
 }

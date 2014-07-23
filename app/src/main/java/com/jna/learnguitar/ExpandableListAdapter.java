@@ -89,7 +89,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter{
                 @Override
                 public void onClick(View v) {
                     Intent showTabIntent = new Intent(_context, TabPlayerActivity.class);
-                    showTabIntent.putExtra("com.jna.LearnGuitar.filename", categoryName + "_" + childText);
+                    showTabIntent.putExtra("com.jna.LearnGuitar.filename", categoryName + "_" + childText.replaceAll(" ", ""));
                     _context.startActivity(showTabIntent);
                 }
             });

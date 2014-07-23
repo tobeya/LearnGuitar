@@ -3,6 +3,7 @@ package com.jna.learnguitar;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -10,6 +11,12 @@ import java.util.List;
  * Created by adamtobey on 7/7/14.
  */
 public class DataProvider {
+
+    private static HashMap<CharArrayHasher, IntArrayHasher> fingeringSuggestions = new HashMap<CharArrayHasher, IntArrayHasher>();
+
+    {//init fingeringSuggestions
+
+    }
 
     public static List<String> getListViewHeadersByTag(String tag){
         List<String> headers = new ArrayList<String>();
@@ -118,6 +125,46 @@ public class DataProvider {
             return null;
         }
         return children;
+    }
+
+    public static int[] getFingerSuggestions(char[] locations){
+        return fingeringSuggestions.get(new CharArrayHasher(locations)).getArray();
+    }
+
+    static class CharArrayHasher {
+        private char[] array;
+        private int hash = Arrays.hashCode(array);
+
+        public CharArrayHasher(char[] array){
+            this.array = array;
+        }
+
+        public char[] getArray(){
+            return array;
+        }
+
+        @Override
+        public int hashCode(){
+            return hash;
+        }
+    }
+
+    static class IntArrayHasher {
+        private int[] array;
+        private int hash = Arrays.hashCode(array);
+
+        public IntArrayHasher(int[] array){
+            this.array = array;
+        }
+
+        public int[] getArray(){
+            return array;
+        }
+
+        @Override
+        public int hashCode(){
+            return hash;
+        }
     }
 
 }

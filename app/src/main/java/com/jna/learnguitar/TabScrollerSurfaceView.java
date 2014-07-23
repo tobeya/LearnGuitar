@@ -18,6 +18,8 @@ import android.util.Log;
 public class TabScrollerSurfaceView extends AbstractLayeredSurfaceView {
     private final String tag = "LearnGuitar/TabScrollerSurfaceView";
 
+    TabPlayerActivity.PlaybackThread playbackController;
+
     Picture currentTabRender;
     float tabScrollRate; //pixels per millisecond
     private Canvas currentTabRenderCanvas;
@@ -28,14 +30,17 @@ public class TabScrollerSurfaceView extends AbstractLayeredSurfaceView {
     private float actualTextHeightPx;
     private final float preferredTextPaddingDp = 3;
     private final float preferredTextPaddingPx;
-    private String[] tabLines;
+    private final float lineSpacingDp = 5;
+    private final float lineSpacingPx;
+    private float heightIncrement = getHeight()/7f;
 
-    public TabScrollerSurfaceView(Context context, String[] tabLines, DisplayMetrics displayMetrics){
+    public TabScrollerSurfaceView(Context context, DisplayMetrics displayMetrics, TabPlayerActivity.PlaybackThread playbackController){
         super(context);
-        this.tabLines = tabLines;
         this.displayMetrics = displayMetrics;
         preferredTextHeightPx = preferredTextHeightSp * displayMetrics.scaledDensity;
         preferredTextPaddingPx = preferredTextPaddingDp * displayMetrics.density;
+        lineSpacingPx = lineSpacingDp * displayMetrics.density;
+        this.playbackController = playbackController;
     }
 
     protected void initializeLayers(){
@@ -54,16 +59,18 @@ public class TabScrollerSurfaceView extends AbstractLayeredSurfaceView {
         };
 
         SurfaceViewRenderLayer tab = new SurfaceViewRenderLayer() {
+            private final float baseOffset = getWidth()/2f;
             private RectF tabBounds;
             {
+                generateTabView();
                 tabBounds = new RectF(0, currentTabRender.getWidth(), 0, currentTabRender.getHeight());
-                tabBounds.offset(getWidth()/3f, 0f);
+                tabBounds.offset(baseOffset, 0f);
             }
 
             @Override
             public void render(Canvas canvas, int elapsedMillis) {
 
-                tabBounds.offset(elapsedMillis*tabScrollRate, 0);
+                tabBounds.offsetTo(baseOffset + getLineX(playbackController.getLineNumber()), 0);
 
                 canvas.drawPicture(currentTabRender);
             }
@@ -103,6 +110,7 @@ public class TabScrollerSurfaceView extends AbstractLayeredSurfaceView {
             @Override
             public void render(Canvas canvas, int elapsedNanos) {
                 canvas.drawRect(bounds, redPaint);
+                setNeedsUpdate(false);
             }
         };
 
@@ -117,24 +125,36 @@ public class TabScrollerSurfaceView extends AbstractLayeredSurfaceView {
         generateTabView();
     }
 
+    private float getLineX(float line){
+        return lineSpacingPx * (line + 1);
+    }
+
+    private float getStringY(float string){
+        return heightIncrement * (string + 1);
+    }
+
     private void generateTabView(){
-        int height = getHeight();
-        float heightIncrement = height/6f;
         if (preferredTextHeightPx + preferredTextPaddingPx > heightIncrement){
             actualTextHeightPx = heightIncrement - preferredTextPaddingPx;
             Log.w(tag, "Tab text resized to " + actualTextHeightPx);
         }
 
+        char[][] tabChars = playbackController.getAllLines();
+
         textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         textPaint.setTextSize(actualTextHeightPx); //TODO make sure the text size is supposed to be in px
         Rect textBounds = new Rect();
-        textPaint.getTextBounds(tabLines[0], 0, tabLines[0].length(), textBounds);
-        int width = textBounds.width();
+        textPaint.getTextBounds("m", 0, 1, textBounds);
+        int mWidth = textBounds.width();
 
-        currentTabRenderCanvas = currentTabRender.beginRecording(width, height);
+        currentTabRenderCanvas = currentTabRender.beginRecording(mWidth, getHeight());
 
-        for (int line = 0; line < 6; line++) {
-            currentTabRenderCanvas.drawText(tabLines[line], 0f, heightIncrement*line, textPaint);
+        char print;
+        for (int line = 0; line < tabChars.length; line++){
+            for (int string = 0; string < tabChars[line].length; string++){
+                print = tabChars[line][string];
+                currentTabRenderCanvas.drawText(print != TabPlayerActivity.blankChar ? "" + print : " ", getLineX(line), getStringY(string), textPaint);
+            }
         }
 
         currentTabRender.endRecording();

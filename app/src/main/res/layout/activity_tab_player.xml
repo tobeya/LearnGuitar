@@ -13,12 +13,6 @@
         android:layout_weight="2"
         android:id="@+id/tabScrollerContainer"></FrameLayout>
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:id="@+id/fingeringDiagramContainer"></FrameLayout>
-
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="wrap_content"
@@ -28,22 +22,29 @@
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/imageButton" />
+            android:id="@+id/playbackPreviousButton"
+            android:focusableInTouchMode="false" />
 
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/imageButton2" />
+            android:id="@+id/playbackPlayPauseButton" />
 
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/imageButton3" />
+            android:id="@+id/playbackStopButton" />
 
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/imageButton4" />
+            android:id="@+id/playbackNextButton" />
     </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="2"
+        android:id="@+id/fingeringDiagramContainer"></FrameLayout>
 
 </LinearLayout>
